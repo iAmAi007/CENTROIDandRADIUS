@@ -209,7 +209,7 @@
                 const centerLongitude = longitudes.reduce((sum, lon) => sum + lon, 0) / longitudes.length;
 
                 document.getElementById("output").innerHTML = `
-                    <p><strong>Geographical Center: (in different coordinates formats) </strong><span>${centerLatitude.toFixed(6)}, ${centerLongitude.toFixed(6)}</span></p>`;
+                    <p><strong>Center: (in different coordinates formats) </strong><span>${centerLatitude.toFixed(6)}, ${centerLongitude.toFixed(6)}</span></p>`;
   
                 if (polygonLayer) {
                     map.removeLayer(polygonLayer);
