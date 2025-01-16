@@ -80,8 +80,8 @@
         <form id="coordinate-form">
             <div id="coordinate-fields" class="input-container">
                 <div class="coordinate-row">
-                    <input type="text" style="font-size: 16px;" placeholder="Latitude 1" id="latitude1" name="latitude1" required>
-                    <input type="text" style="font-size: 16px;" placeholder="Longitude 1" id="longitude1" name="longitude1" required>
+                    <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude 1" id="latitude1" name="latitude1" required>
+                    <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude 1" id="longitude1" name="longitude1" required>
                 </div>
             </div>
             <div id="buttonsContainer">
@@ -159,8 +159,8 @@
             const div = document.createElement("div");
             div.className = "coordinate-row";
             div.innerHTML = `
-                <input type="text" placeholder="Latitude ${coordinateCount}" id="latitude${coordinateCount}" name="latitude${coordinateCount}" required>
-                <input type="text" placeholder="Longitude ${coordinateCount}" id="longitude${coordinateCount}" name="longitude${coordinateCount}" required>
+                <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude ${coordinateCount}" id="latitude${coordinateCount}" name="latitude${coordinateCount}" required>
+                <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude ${coordinateCount}" id="longitude${coordinateCount}" name="longitude${coordinateCount}" required>
             `;
             document.getElementById("coordinate-fields").appendChild(div);
         }
