@@ -297,30 +297,6 @@
         throw new Error("Invalid coordinate format.");
     }
 
- /*function wrapNumbersWithCode(strings, ...values) {
-  return strings.reduce((result, string, i) => {
-    // Append the current string segment
-    result += string;
-
-    // If there's a corresponding value
-    if (i < values.length) {
-      const value = values[i];
-
-      // Check if the value is a number
-      if (typeof value === 'number') {
-        // Wrap the number in <code> tags
-        result += `<code>${value}</code>`;
-      } else {
-        // Append the value as is
-        result += value;
-      }
-    }*/
-
-    return result;
-  }, '');
-}   
-    
-
 function calculateAndPlot() {
     try {
         const latitudes = [];
@@ -356,15 +332,16 @@ function calculateAndPlot() {
         const lonDMS = toDMS(centerLongitude);
 
         // Display results
-        document.getElementById("output").innerHTML =`
+        document.getElementById("output").innerHTML = `
             <p>
                 <strong>Center:</strong> 
-                <span id="center-display" style="cursor: pointer; text-align: center; color: red;">
-                    ${Math.abs(latDMS.degrees)}°${latDMS.minutes}'${latDMS.seconds}&quot;${centerLatitude < 0 ? 'S' : 'N'}, ${Math.abs(lonDMS.degrees)}°${lonDMS.minutes}'${lonDMS.seconds}&quot;${centerLongitude < 0 ? 'W' : 'E'}
+                <span id="center-display" style="cursor: pointer; color: red;">
+                    ${Math.abs(latDMS.degrees)}°${latDMS.minutes}'${latDMS.seconds}"${centerLatitude < 0 ? 'S' : 'N'}, 
+                ${Math.abs(lonDMS.degrees)}°${lonDMS.minutes}'${lonDMS.seconds}"${centerLongitude < 0 ? 'W' : 'E'}
                 </span>. 
                 <strong>Radius:</strong> ${radius.toFixed(2)} Nautical miles
             </p>
-            <div id="format-options" style="display: none; text-align: left; margin-top: 10px; padding-left: 10px; border-left: 2px solid #ccc;">
+            <div id="format-options" style="display: none; margin-top: 10px; padding-left: 10px; border-left: 2px solid #ccc;">
                 <p class="format-option" data-format="${centerLatitude.toFixed(6)}, ${centerLongitude.toFixed(6)}" style="cursor: pointer; color: red;">
                     ${centerLatitude.toFixed(6)}, ${centerLongitude.toFixed(6)}
                 </p>
