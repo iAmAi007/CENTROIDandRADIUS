@@ -6,6 +6,102 @@
     <title>Geographical Center Calculator</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        @media (max-width: 768px) {
+            body {
+                padding: 20px !important;
+                font-size: 14px !important;
+                letter-spacing: 0.3px !important;
+                margin: 0 !important;
+                border: none !important;
+            }
+            .close-icon {
+            font-size: 18px;
+            color: red !important;
+            cursor: pointer;
+            margin-left: 10px;
+            align-self: center;
+            }
+            .close-icon:hover {
+            color: darkred !important;
+            }
+            .coordinate-row input {
+            border-radius: 0px !important;
+            }
+
+            .container {
+                max-width: 100%;
+                width: 100%;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                box-sizing: border-box;
+            }
+
+            .coordinate-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .coordinate-row input {
+                width: 100%;
+            }
+
+            #buttonsContainer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+                border-radius: 0px !important;
+            }
+
+            #map {
+                height: 300px;
+            }
+
+            /* Additional styles for smaller screens (max-width: 480px) */
+            @media (max-width: 480px) {
+                body {
+                    font-size: 14px;
+                    padding: 20px !important;
+                    margin: 0 !important;
+                    border: none !important;
+                    font-size: 14px !important;
+                    letter-spacing: 0.3px !important;
+                }
+                .close-icon {
+                font-size: 18px;
+                color: red !important;
+                cursor: pointer;
+                margin-left: 10px;
+                align-self: center;
+                }
+                .close-icon:hover {
+                color: darkred !important;
+                }
+                .coordinate-row input {
+                border-radius: 0px !important;
+                }
+                .container {
+                max-width: 100%;
+                width: 100%;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                box-sizing: border-box;
+            }
+
+                #map {
+                    height: 250px; /* Reduce map height for very small screens */
+                }
+
+                button {
+                    font-size: 14px; /* Adjust button font size */
+                    border-radius: 0px !important;
+                }
+            }
+        }
         @font-face {
             font-family: 'SF Pro Display';
             src: url('SFPRODISPLAY-REGULAR.TTF') format('truetype');
@@ -33,6 +129,8 @@
         .container {
             max-width: 600px;
             width: 100%;
+            border: 1px solid #6cb4ef;
+            padding: 20px;
         }
         .input-container {
             margin-bottom: 0px;
@@ -74,15 +172,25 @@
             height: 400px;
             margin-top: 20px;
             border: 1px solid #6cb4ef;
-            border-radius: 0px;
+            border-radius: none;
             width: 100%;
             box-sizing: border-box;
+        }
+        .close-icon {
+            font-size: 18px;
+            color: red;
+            cursor: pointer;
+            margin-left: 10px;
+            align-self: center;
+        }
+        .close-icon:hover {
+            color: darkred;
         }
 
     </style>
 </head>
 <body>
-    <div class="container" style="border: 1px solid #6cb4ef; padding: 20px;";>
+    <div class="container">
         <!--<h1>Geographical Center Calculation</h1>-->
         <div id="spacing" style="padding-top: 30px;"></div>
         <div class="instruction" style="text-align: justify; padding-bottom: 10px;"> 
@@ -93,14 +201,15 @@
 
         <form id="coordinate-form">
             <div id="coordinate-fields" class="input-container">
-                <div class="coordinate-row">
+                <div class="coordinate-row" id="coordinate-row-1">
                     <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude 1" id="latitude1" name="latitude1" required>
                     <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude 1" id="longitude1" name="longitude1" required>
+                    <span class="close-icon" onclick="removeField(1)">✖</span>
                 </div>
             </div>
             <div id="buttonsContainer">
-            <button type="button" onclick="addField()">Add more coordinates</button>
-            <button type="button" onclick="calculateAndPlot()">Calculate and plot</button>
+            <button type="button" onclick="addField()">Add more</button>
+            <button type="button" onclick="calculateAndPlot()">Calculate</button>
             <style>
                 #buttonsContainer {
                     display: flex;
@@ -126,7 +235,7 @@
                     background: #0078d4; /* Match the Distance button color */
                     color: white;
                     border: none;
-                    border-radius: 0px;
+                    border-radius: none;
                     cursor: pointer;
                     font-size: 16px;
                     transition: background-color 0.3s ease
@@ -165,6 +274,8 @@
             }).addTo(map);
         });
 
+
+        // Function to add a new row
         function addField() {
             coordinateCount++;
             if (coordinateCount > 10) {
@@ -173,13 +284,56 @@
             }
             const div = document.createElement("div");
             div.className = "coordinate-row";
+            div.id = `coordinate-row-${coordinateCount}`;
             div.innerHTML = `
                 <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude ${coordinateCount}" id="latitude${coordinateCount}" name="latitude${coordinateCount}" required>
                 <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude ${coordinateCount}" id="longitude${coordinateCount}" name="longitude${coordinateCount}" required>
+                <span class="close-icon" onclick="removeField(${coordinateCount})">✖</span>
             `;
             document.getElementById("coordinate-fields").appendChild(div);
+            updatePlaceholders();
         }
 
+        // Function to remove a row and update numbering
+        function removeField(index) {
+            const row = document.getElementById(`coordinate-row-${index}`);
+            if (row) {
+                row.remove();
+                coordinateCount--;
+                updatePlaceholders();
+            }
+        }
+
+        // Function to update placeholders and IDs dynamically
+        function updatePlaceholders() {
+            const rows = document.querySelectorAll(".coordinate-row");
+            let newCount = 1;
+
+            rows.forEach((row) => {
+                const latitudeInput = row.querySelector("input:first-child");
+                const longitudeInput = row.querySelector("input:nth-child(2)");
+                const closeIcon = row.querySelector(".close-icon");
+
+                // Update placeholders and IDs
+                latitudeInput.placeholder = `Latitude ${newCount}`;
+                latitudeInput.id = `latitude${newCount}`;
+                latitudeInput.name = `latitude${newCount}`;
+
+                longitudeInput.placeholder = `Longitude ${newCount}`;
+                longitudeInput.id = `longitude${newCount}`;
+                longitudeInput.name = `longitude${newCount}`;
+
+                // Update close button onclick function
+                closeIcon.setAttribute("onclick", `removeField(${newCount})`);
+
+                // Update row ID
+                row.id = `coordinate-row-${newCount}`;
+
+                newCount++;
+            });
+
+            coordinateCount = rows.length; // Update the global count
+        }
         function parseCoordinate(value) {
             value = value.trim().toUpperCase();
 
@@ -254,7 +408,7 @@
     </script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    /*document.addEventListener("DOMContentLoaded", () => {
         const isMobile = /Mobi|Android|iPad|iPhone/i.test(navigator.userAgent) || window.innerWidth <= 768;
         if (isMobile) {
             document.body.innerHTML = `
@@ -264,7 +418,7 @@
                 </div>
             `;
         }
-    });
+    });*/
 
 
     function parseCoordinate(value) {
