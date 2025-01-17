@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geographical Center Calculator</title>
+    <!--<title>Geographical Center Calculator</title>-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         @media (max-width: 768px) {
@@ -337,28 +337,56 @@
         function parseCoordinate(value) {
             value = value.trim().toUpperCase();
 
-            // Handle Degrees, Minutes, Seconds without symbols (e.g "04 45 00S")
-            const dmsPattern = /^(\d+)\s+(\d+)\s+(\d+)([NSWE])$/;
-            const dmsMatch = value.match(dmsPattern);
-            if (dmsMatch) {
-                const degrees = parseFloat(dmsMatch[1]);
-                const minutes = parseFloat(dmsMatch[2]);
-                const seconds = parseFloat(dmsMatch[3]);
-                const direction = dmsMatch[4];
+            // Handle Decimal Degrees (e.g., "37.7749", "-122.4194")
+            const decimalPattern = /^-?\d+(\.\d+)?$/;
+            if (decimalPattern.test(value)) {
+                return parseFloat(value);
+            }
+
+            // Handle Directional Decimal Degrees (e.g., "37.7749N", "122.4194W")
+            const directionalDecimalPattern = /^(\d+(\.\d+)?)([NSWE])$/;
+            const directionalDecimalMatch = value.match(directionalDecimalPattern);
+            if (directionalDecimalMatch) {
+                const decimal = parseFloat(directionalDecimalMatch[1]);
+                const direction = directionalDecimalMatch[3];
+                return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+            }
+
+            // Handle Degrees and Minutes with symbols (e.g., "37°46'N", "036°25'W")
+            const dmSymbolPattern = /^(\d{1,3})°(\d{1,2})['′]?([NSWE])$/;
+            const dmSymbolMatch = value.match(dmSymbolPattern);
+            if (dmSymbolMatch) {
+                const degrees = parseFloat(dmSymbolMatch[1]);
+                const minutes = parseFloat(dmSymbolMatch[2]);
+                const direction = dmSymbolMatch[3];
+                let decimal = degrees + minutes / 60;
+                return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+            }
+
+            // Handle Degrees and Minutes without symbols (e.g., "04 45S", "036 30E" or "36 30E")
+            const dmNoSymbolPattern = /^(\d{2,3})\s+(\d{1,2})([NSWE])$/;
+            const dmNoSymbolMatch = value.match(dmNoSymbolPattern);
+            if (dmNoSymbolMatch) {
+                const degrees = parseFloat(dmNoSymbolMatch[1]);
+                const minutes = parseFloat(dmNoSymbolMatch[2]);
+                const direction = dmNoSymbolMatch[3];
+                let decimal = degrees + minutes / 60;
+                return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+            }
+
+            // Handle Degrees, Minutes, and Seconds without symbols (e.g., "04 45 00S", "036 30 00E" or "36 30 00E")
+            const dmsNoSymbolPattern = /^(\d{2,3})\s+(\d{1,2})\s+(\d{1,2}(\.\d{1,5})?)([NSWE])$/;
+            const dmsNoSymbolMatch = value.match(dmsNoSymbolPattern);
+            if (dmsNoSymbolMatch) {
+                const degrees = parseFloat(dmsNoSymbolMatch[1]);
+                const minutes = parseFloat(dmsNoSymbolMatch[2]);
+                const seconds = parseFloat(dmsNoSymbolMatch[3]);
+                const direction = dmsNoSymbolMatch[5];
                 let decimal = degrees + minutes / 60 + seconds / 3600;
-                if (direction === 'S' || direction === 'W') {
-                    decimal = -decimal;
-                }
-                return decimal;
+                return (direction === 'S' || direction === 'W') ? -decimal : decimal;
             }
 
-            // Handle Decimal Degrees (e.g "37.7749")
-            const number = parseFloat(value);
-            if (!isNaN(number)) {
-                return number;
-            }
-
-            throw new Error("Invalid coordinate format.");
+            throw new Error('Invalid coordinate format');
         }
 
         function calculateAndPlot() {
@@ -375,16 +403,14 @@
                     coordinates.push([lat, lon]);
                 }
 
-                const median = (arr) => {
-                    const sorted = [...arr].sort((a, b) => a - b);
-                    const mid = Math.floor(sorted.length / 2);
-                    return sorted.length % 2 !== 0
-                        ? sorted[mid]
-                        : (sorted[mid - 1] + sorted[mid]) / 2;
+                const midpoint = (arr) => {
+                    const min = Math.min(...arr);
+                    const max = Math.max(...arr);
+                    return (min + max) / 2;
                 };
 
-                const centerLatitude = median(latitudes);
-                const centerLongitude = median(longitudes);
+                const centerLatitude = midpoint(latitudes);
+                const centerLongitude = midpoint(longitudes);
 
 
                 document.getElementById("output").innerHTML = `
@@ -421,45 +447,60 @@
     });*/
 
 
-    function parseCoordinate(value) {
-        value = value.trim().toUpperCase();
+function parseCoordinate(value) {
+    value = value.trim().toUpperCase();
 
-        // Handle Degrees, Minutes without symbols (e.g., "04 45S")
-        const dmPattern = /^(\d+)\s+(\d+)([NSWE])$/;
-        const dmMatch = value.match(dmPattern);
-        if (dmMatch) {
-            const degrees = parseFloat(dmMatch[1]);
-            const minutes = parseFloat(dmMatch[2]);
-            const direction = dmMatch[3];
-            let decimal = degrees + minutes / 60;
-            if (direction === 'S' || direction === 'W') {
-                decimal = -decimal;
-            }
-            return decimal;
-        }
-
-        // Existing parsing logic for other formats
-        const dmsPattern = /^(\d+)\s+(\d+)\s+(\d+)([NSWE])$/;
-        const dmsMatch = value.match(dmsPattern);
-        if (dmsMatch) {
-            const degrees = parseFloat(dmsMatch[1]);
-            const minutes = parseFloat(dmsMatch[2]);
-            const seconds = parseFloat(dmsMatch[3]);
-            const direction = dmsMatch[4];
-            let decimal = degrees + minutes / 60 + seconds / 3600;
-            if (direction === 'S' || direction === 'W') {
-                decimal = -decimal;
-            }
-            return decimal;
-        }
-
-        const number = parseFloat(value);
-        if (!isNaN(number)) {
-            return number;
-        }
-
-        throw new Error("Invalid coordinate format.");
+    // Handle Decimal Degrees (e.g., "37.7749", "-122.4194")
+    const decimalPattern = /^-?\d+(\.\d+)?$/;
+    if (decimalPattern.test(value)) {
+        return parseFloat(value);
     }
+
+    // Handle Directional Decimal Degrees (e.g., "37.7749N", "122.4194W")
+    const directionalDecimalPattern = /^(\d+(\.\d+)?)([NSWE])$/;
+    const directionalDecimalMatch = value.match(directionalDecimalPattern);
+    if (directionalDecimalMatch) {
+        const decimal = parseFloat(directionalDecimalMatch[1]);
+        const direction = directionalDecimalMatch[3];
+        return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+    }
+
+    // Handle Degrees and Minutes with symbols (e.g., "37°46'N", "036°25'W")
+    const dmSymbolPattern = /^(\d{1,3})°(\d{1,2})['′]?([NSWE])$/;
+    const dmSymbolMatch = value.match(dmSymbolPattern);
+    if (dmSymbolMatch) {
+        const degrees = parseFloat(dmSymbolMatch[1]);
+        const minutes = parseFloat(dmSymbolMatch[2]);
+        const direction = dmSymbolMatch[3];
+        let decimal = degrees + minutes / 60;
+        return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+    }
+
+    // Handle Degrees and Minutes without symbols (e.g., "04 45S", "036 30E" or "36 30E")
+    const dmNoSymbolPattern = /^(\d{2,3})\s+(\d{1,2})([NSWE])$/;
+    const dmNoSymbolMatch = value.match(dmNoSymbolPattern);
+    if (dmNoSymbolMatch) {
+        const degrees = parseFloat(dmNoSymbolMatch[1]);
+        const minutes = parseFloat(dmNoSymbolMatch[2]);
+        const direction = dmNoSymbolMatch[3];
+        let decimal = degrees + minutes / 60;
+        return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+    }
+
+    // Handle Degrees, Minutes, and Seconds without symbols (e.g., "04 45 00S", "036 30 00E" or "36 30 00E")
+    const dmsNoSymbolPattern = /^(\d{2,3})\s+(\d{1,2})\s+(\d{1,2}(\.\d{1,5})?)([NSWE])$/;
+    const dmsNoSymbolMatch = value.match(dmsNoSymbolPattern);
+    if (dmsNoSymbolMatch) {
+        const degrees = parseFloat(dmsNoSymbolMatch[1]);
+        const minutes = parseFloat(dmsNoSymbolMatch[2]);
+        const seconds = parseFloat(dmsNoSymbolMatch[3]);
+        const direction = dmsNoSymbolMatch[5];
+        let decimal = degrees + minutes / 60 + seconds / 3600;
+        return (direction === 'S' || direction === 'W') ? -decimal : decimal;
+    }
+
+    throw new Error('Invalid coordinate format');
+}
 
 function calculateAndPlot() {
     try {
@@ -476,9 +517,15 @@ function calculateAndPlot() {
             coordinates.push([lat, lon]);
         }
 
-        // Calculate centroid
-        const centerLatitude = latitudes.reduce((sum, lat) => sum + lat, 0) / latitudes.length;
-        const centerLongitude = longitudes.reduce((sum, lon) => sum + lon, 0) / longitudes.length;
+        // Calculate centroid (Largest plus smallest divide by 2)
+        const midpoint = (arr) => {
+                    const min = Math.min(...arr);
+                    const max = Math.max(...arr);
+                    return (min + max) / 2;
+                };
+
+                const centerLatitude = midpoint(latitudes);
+                const centerLongitude = midpoint(longitudes);
 
         // Calculate radius
         const radius = calculateRadius(latitudes, longitudes);
@@ -577,8 +624,14 @@ function calculateAndPlot() {
                 return R * c; // Distance in nautical miles
             };
 
-            const centerLatitude = latitudes.reduce((sum, lat) => sum + lat, 0) / latitudes.length;
-            const centerLongitude = longitudes.reduce((sum, lon) => sum + lon, 0) / longitudes.length;
+            const midpoint = (arr) => {
+                    const min = Math.min(...arr);
+                    const max = Math.max(...arr);
+                    return (min + max) / 2;
+                };
+
+                const centerLatitude = midpoint(latitudes);
+                const centerLongitude = midpoint(longitudes);
 
             let maxDistance = 0;
             for (let i = 0; i < latitudes.length; i++) {
