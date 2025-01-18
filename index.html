@@ -50,6 +50,11 @@
                 width: 100%;
                 border-radius: 0px !important;
             }
+            .output {
+                text-align: left !important;
+                font-size: 14px !important;
+                }
+
             #map {
                 height: 300px;
             }
@@ -93,6 +98,11 @@
                 border: none !important;
                 box-sizing: border-box;
                 }
+                .output {
+                text-align: left !important;
+                font-size: 14px !important;
+                }
+
                 #map {
                     height: 250px; /* Reduce map height for very small screens */
                 }
@@ -208,8 +218,8 @@
         <div id="spacing" style="padding-top: 30px;"></div>
         <div class="instruction" style="text-align: justify; padding-bottom: 10px;"> 
             <p>This tool calculates the geographical center (centroid) of a given set of coordinates. You can input up to 10 points and visualize the area on a map.</p>
-            <p><span style="font-weight: 500;">Accepted Input Formats:</span> Decimal degrees e.g <span style="color: #32cd32;"><code>37.7749</code>, <code>-122.4194</span>; </code>directional decimal degrees e.g <span style="color: #ff00ff;"><code>37.7749N</code>, <code>122.4194W</span>; </code>degrees and minutes with direction e.g <span style="color: #ff8c00;"><code>37°46'N</code>, <code>122°25'W</span>; </code>degrees and minutes without symbols e.g <span style="color: red;"><code>04 45S</code>, <code>040 30E</span> & </code>degrees, minutes and seconds without symbols e.g <span style="color: #00bfff;"><code>04 45 00S</code>, <code>040 30 00E</span>.</code></p>
-            <p>Ensure the input format is consistent and valid. The latitude must range from <span style="color: #ff00ff;"><code>-90</code></span> to <span style="color: #ff00ff;"><code>90</code></span>, and the longitude must range from <span style="color: red;"><code>-180</code></span> to <span style="color: red;"><code>180</code></span>.</p>
+            <p><span style="font-weight: 500;">Accepted Input Formats:</span> Decimal degrees e.g., <span style="color: #ff4500;">37.7749, -122.4194</span>; directional decimal degrees e.g., <span style="color: #1e90ff;">37.7749N, 122.4194W</span>; degrees and minutes with direction e.g., <span style="color: #228b22;">37°46'N, 122°25'W</span>; degrees and minutes without symbols (e.g., two-digit or three-digit longitude) e.g., <span style="color: #ffa500;">04 45S, 040 30E</span> or <span style="color: #ffa07a;">04 45S, 36 30E</span>; and degrees, minutes, and seconds without symbols e.g., <span style="color: #8a2be2;">04 45 00S, 040 30 00E</span>.</p>
+            <p>Ensure the input format is consistent and valid. The latitude must range from <span style="color: #dc143c;">-90</span> to <span style="color: #dc143c;">90</span>, and the longitude must range from <span style="color: #2e8b57;">-180</span> to <span style="color: #2e8b57;">180</span>.</p>
         </div>
 
         <form id="coordinate-form">
