@@ -15,11 +15,7 @@
                 border: none !important;
             }
             .close-icon {
-            font-size: 18px;
             color: red !important;
-            cursor: pointer;
-            margin-left: 10px;
-            align-self: center;
             }
             .close-icon:hover {
             color: darkred !important;
@@ -56,35 +52,46 @@
                 border-radius: 0px !important;
             }
             .output {
-            text-align: left !important;
-            font-size: 16px !important;
-            }
+                text-align: left !important;
+                font-size: 14px !important;
+                }
+
             #map {
                 height: 300px;
             }
+            .add-icon {
+                    color: #0078d4 !important;
+                }
+
+                .add-icon:hover {
+                    color: #1358BF !important;
+                }
 
             /* Additional styles for smaller screens (max-width: 480px) */
             @media (max-width: 480px) {
                 body {
-                    font-size: 14px;
+                    font-size: 16px !important;
                     padding: 20px !important;
                     margin: 0 !important;
                     border: none !important;
-                    font-size: 16px !important;
+                    font-size: 14px !important;
                     letter-spacing: 0.3px !important;
                 }
                 .close-icon {
-                font-size: 18px;
                 color: red !important;
-                cursor: pointer;
-                margin-left: 10px;
-                align-self: center;
                 }
                 .close-icon:hover {
                 color: darkred !important;
                 }
                 .coordinate-row input {
                 border-radius: 0px !important;
+                }
+                .add-icon {
+                    color: #0078d4 !important;
+                }
+
+                .add-icon:hover {
+                    color: #1358BF !important;
                 }
                 .container {
                 max-width: 100%;
@@ -93,14 +100,14 @@
                 margin: 0 !important;
                 border: none !important;
                 box-sizing: border-box;
-            }
-
-                #map {
-                    height: 250px; /* Reduce map height for very small screens */
                 }
                 .output {
                 text-align: left !important;
                 font-size: 14px !important;
+                }
+
+                #map {
+                    height: 250px; /* Reduce map height for very small screens */
                 }
 
                 button {
@@ -187,11 +194,23 @@
             font-size: 18px;
             color: red;
             cursor: pointer;
-            margin-left: 10px;
+            margin-right: 10px;
             align-self: center;
         }
         .close-icon:hover {
             color: darkred;
+        }
+        .add-icon {
+            font-size: 18px;
+            color: #0078d4;
+            cursor: pointer;
+            margin-left: 10px;
+            align-self: center;
+            transform: rotate(45deg); /* Rotates the ✖ icon to look like a + icon */
+        }
+
+        .add-icon:hover {
+            color: #1358BF;
         }
 
     </style>
@@ -209,14 +228,15 @@
         <form id="coordinate-form">
             <div id="coordinate-fields" class="input-container">
                 <div class="coordinate-row" id="coordinate-row-1">
+                    <span class="close-icon" onclick="removeField(1)">✖</span>
                     <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude 1" id="latitude1" name="latitude1" required>
                     <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude 1" id="longitude1" name="longitude1" required>
-                    <span class="close-icon" onclick="removeField(1)">✖</span>
+                    <span class="add-icon" onclick="addField()">✖</span>
                 </div>
             </div>
             <div id="buttonsContainer">
-            <button type="button" onclick="addField()">Add more</button>
-            <button type="button" onclick="calculateAndPlot()">Calculate</button>
+            <!--<button type="button" onclick="addField()">Add more</button>-->
+            <button type="button" onclick="calculateAndPlot()">Calculate and plot on map</button>
             <style>
                 #buttonsContainer {
                     display: flex;
@@ -282,7 +302,7 @@
         });
 
 
-        // Function to add a new row
+        /* // Function to add a new row
         function addField() {
             coordinateCount++;
             if (coordinateCount > 10) {
@@ -299,16 +319,47 @@
             `;
             document.getElementById("coordinate-fields").appendChild(div);
             updatePlaceholders();
-        }
+        }*/
+
 
         // Function to remove a row and update numbering
         function removeField(index) {
             const row = document.getElementById(`coordinate-row-${index}`);
             if (row) {
                 row.remove();
-                coordinateCount--;
-                updatePlaceholders();
+                updatePlaceholders(); // Reorder rows and update numbering
             }
+        }
+
+        // Function to add a new row
+        function addField() {
+            coordinateCount++;
+            if (coordinateCount > 10) {
+                alert("Maximum of 10 coordinates allowed.");
+                return;
+            }
+
+            // Get the container for the coordinate rows
+            const coordinateFields = document.getElementById('coordinate-fields');
+
+            // Create a new row dynamically
+            const newRow = document.createElement('div');
+            newRow.className = 'coordinate-row';
+            newRow.id = `coordinate-row-${coordinateCount}`;
+
+            // Add the content to the new row
+            newRow.innerHTML = `
+                <span class="close-icon" onclick="removeField(${coordinateCount})">✖</span>
+                <input type="text" style="font-size: 16px; text-align: center;" placeholder="Latitude ${coordinateCount}" id="latitude${coordinateCount}" name="latitude${coordinateCount}" required>
+                <input type="text" style="font-size: 16px; text-align: center;" placeholder="Longitude ${coordinateCount}" id="longitude${coordinateCount}" name="longitude${coordinateCount}" required>
+                <span class="add-icon" onclick="addField()" style="transform: rotate(45deg); color: #0078d4;">✖</span>
+            `;
+
+            // Append the new row to the container
+            coordinateFields.appendChild(newRow);
+
+            // Update placeholders and IDs
+            updatePlaceholders();
         }
 
         // Function to update placeholders and IDs dynamically
@@ -317,8 +368,8 @@
             let newCount = 1;
 
             rows.forEach((row) => {
-                const latitudeInput = row.querySelector("input:first-child");
-                const longitudeInput = row.querySelector("input:nth-child(2)");
+                const latitudeInput = row.querySelector("input:nth-of-type(1)");
+                const longitudeInput = row.querySelector("input:nth-of-type(2)");
                 const closeIcon = row.querySelector(".close-icon");
 
                 // Update placeholders and IDs
@@ -557,7 +608,7 @@ function calculateAndPlot() {
                     ${Math.abs(latDMS.degrees)}°${latDMS.minutes}'${latDMS.seconds}"${centerLatitude < 0 ? 'S' : 'N'}, 
                 ${Math.abs(lonDMS.degrees)}°${lonDMS.minutes}'${lonDMS.seconds}"${centerLongitude < 0 ? 'W' : 'E'}
                 </span>. 
-                <strong>Radius:</strong> ${radius.toFixed(2)} NM 
+                <strong>Radius:</strong> ${radius.toFixed(2)} Nautical miles
             </p>
             <div id="format-options" style="display: none; margin-top: 10px; padding-left: 10px; border-left: 2px solid #ccc;">
                 <p class="format-option" data-format="${centerLatitude.toFixed(6)}, ${centerLongitude.toFixed(6)}" style="cursor: pointer; color: red;">
