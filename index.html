@@ -6,23 +6,29 @@
     <!--<title>Geographical Center Calculator</title>-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        @media (max-width: 768px) {
+        /* For screens up to 768px */
+        @media (max-width: 768px) and (orientation: portrait), 
+               (max-width: 768px) and (orientation: landscape) {
             body {
                 padding: 20px !important;
                 letter-spacing: 0.3px !important;
                 margin: 0 !important;
                 border: none !important;
+                font-size: 16px; /* Ensure consistent font size */
             }
+        
             .close-icon {
-            color: red !important;
+                color: red !important;
             }
+        
             .close-icon:hover {
-            color: darkred !important;
+                color: darkred !important;
             }
+        
             .coordinate-row input {
-            border-radius: 0px !important;
+                border-radius: 0px !important;
             }
-
+        
             .container {
                 max-width: 100%;
                 width: 100%;
@@ -31,86 +37,112 @@
                 border: none !important;
                 box-sizing: border-box;
             }
-
+        
             .coordinate-row {
                 flex-direction: column;
                 gap: 5px;
             }
-
+        
             .coordinate-row input {
                 width: 100%;
             }
-
+        
             #buttonsContainer {
                 flex-direction: column;
                 gap: 10px;
             }
-
+        
             button {
                 width: 100%;
                 border-radius: 0px !important;
+                font-size: 16px; /* Maintain consistent button font size */
             }
+        
             .output {
-                text-align: center; !important;
-                font-size: 16px !important;
-                }
-
-            #map {
-                height: 250 px !important;
+                text-align: center !important;
+                font-size: 16px !important; /* Maintain consistent font size */
             }
+        
+            #map {
+                height: 250px !important; /* Consistent map height for both orientations */
+            }
+        
             .add-icon {
-                    color: #0078d4 !important;
-                }
-
-                .add-icon:hover {
-                    color: #1358BF !important;
-                }
-
-            /* Additional styles for smaller screens (max-width: 480px) */
-            @media (max-width: 480px) {
-                body {
-                    padding: 20px !important;
-                    margin: 0 !important;
-                    border: none !important;
-                    letter-spacing: 0.3px !important;
-                }
-                .close-icon {
+                color: #0078d4 !important;
+            }
+        
+            .add-icon:hover {
+                color: #1358BF !important;
+            }
+        }
+        
+        /* For screens up to 480px */
+        @media (max-width: 480px) and (orientation: portrait), 
+               (max-width: 480px) and (orientation: landscape) {
+            body {
+                padding: 15px !important;
+                letter-spacing: 0.2px !important;
+                margin: 0 !important;
+                border: none !important;
+                font-size: 14px; /* Slightly smaller font size for smaller screens */
+            }
+        
+            .close-icon {
                 color: red !important;
-                }
-                .close-icon:hover {
+            }
+        
+            .close-icon:hover {
                 color: darkred !important;
-                }
-                .coordinate-row input {
+            }
+        
+            .coordinate-row input {
                 border-radius: 0px !important;
-                }
-                .add-icon {
-                    color: #0078d4 !important;
-                }
-
-                .add-icon:hover {
-                    color: #1358BF !important;
-                }
-                .container {
+            }
+        
+            .container {
                 max-width: 100%;
                 width: 100%;
                 padding: 0 !important;
                 margin: 0 !important;
                 border: none !important;
                 box-sizing: border-box;
-                }
-                .output {
-                text-align: center; !important;
-                font-size: 16px !important;
-                }
-
-                #map {
-                    height: 250 px !important; /* Reduce map height for very small screens */
-                }
-
-                button {
-                    font-size: 16px; /* Adjust button font size */
-                    border-radius: 0px !important;
-                }
+            }
+        
+            .coordinate-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+        
+            .coordinate-row input {
+                width: 100%;
+            }
+        
+            #buttonsContainer {
+                flex-direction: column;
+                gap: 10px;
+            }
+        
+            button {
+                width: 100%;
+                border-radius: 0px !important;
+                font-size: 14px; /* Adjust button font size for smaller screens */
+            }
+        
+            .output {
+                text-align: center !important;
+                font-size: 14px !important; /* Slightly smaller font size for small screens */
+            }
+        
+            #map {
+                height: 200px !important; /* Smaller map height for smaller devices */
+            }
+        
+            .add-icon {
+                color: #0078d4 !important;
+            }
+        
+            .add-icon:hover {
+                color: #1358BF !important;
             }
         }
         @font-face {
