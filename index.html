@@ -262,16 +262,7 @@
         <div id="spacing" style="padding-top: 30px;"></div>
         <div class="instruction" style="text-align: justify; padding-bottom: 10px;"> 
             <p>This tool calculates the geographical center (centroid) of a given set of coordinates. You can input up to 10 points and visualize the area on a map.</p>
-            <p>
-                <span style="font-weight: 500;">Accepted Input Formats:</span> 
-                Decimal degrees e.g., <span style="color: #ff4500;">37.7749, -122.4194</span>; 
-                directional decimal degrees e.g., <span style="color: #1e90ff;">37.7749N, 122.4194W</span>; 
-                degrees and minutes with direction e.g., <span style="color: #228b22;">37°46'N, 122°25'W</span>; 
-                degrees and minutes without symbols (e.g., two-digit or three-digit longitude) e.g., <span style="color: #ffa500;">04 45S, 040 30E</span> or 
-                <span style="color: #ffa07a;">04 45S, 36 30E</span>; 
-                degrees, minutes, and seconds without symbols e.g., <span style="color: #8a2be2;">04 45 00S, 040 30 00E</span>; 
-                and compact DMS format e.g., <span style="color: #dc143c;">251459.96N, 0551817.03E</span>.
-            </p>
+            <p><span style="font-weight: 500;">Accepted Input Formats:</span> Decimal degrees e.g., <span style="color: #ff4500;">37.7749, -122.4194</span>; directional decimal degrees e.g., <span style="color: #1e90ff;">37.7749N, 122.4194W</span>; degrees and minutes with direction e.g., <span style="color: #228b22;">37°46'N, 122°25'W</span>; degrees and minutes without symbols (e.g., two-digit or three-digit longitude) e.g., <span style="color: #ffa500;">04 45S, 040 30E</span> or <span style="color: #ffa07a;">04 45S, 36 30E</span>; and degrees, minutes, and seconds without symbols e.g., <span style="color: #8a2be2;">04 45 00S, 040 30 00E</span>.</p>
             <p>Ensure the input format is consistent and valid. The latitude must range from <span style="color: #dc143c;">-90</span> to <span style="color: #dc143c;">90</span>, and the longitude must range from <span style="color: #2e8b57;">-180</span> to <span style="color: #2e8b57;">180</span>.</p>
         </div>
 
@@ -481,43 +472,6 @@
                 let decimal = degrees + minutes / 60;
                 return (direction === 'S' || direction === 'W') ? -decimal : decimal;
             }
-            
-            
-
-
-            // Handle compact DMS format (e.g., "251459.96N", "0551817.03E")
-            const compactDmsPattern = /^(\d{2})(\d{2})(\d{2}(\.\d+)?)([NS])$|^(\d{3})(\d{2})(\d{2}(\.\d+)?)([EW])$/;
-            const compactDmsMatch = value.match(compactDmsPattern);
-            
-            if (compactDmsMatch) {
-                // Determine whether it's latitude (first group) or longitude (second group)
-                const isLatitude = !!compactDmsMatch[1];
-            
-                const degrees = isLatitude
-                    ? parseInt(compactDmsMatch[1], 10)
-                    : parseInt(compactDmsMatch[6], 10);
-                const minutes = isLatitude
-                    ? parseInt(compactDmsMatch[2], 10)
-                    : parseInt(compactDmsMatch[7], 10);
-                const seconds = isLatitude
-                    ? parseFloat(compactDmsMatch[3])
-                    : parseFloat(compactDmsMatch[8]);
-                const direction = isLatitude
-                    ? compactDmsMatch[5]
-                    : compactDmsMatch[10];
-            
-                // Validate bounds for minutes and seconds
-                if (minutes >= 60 || seconds >= 60) {
-                    throw new Error('Invalid minutes or seconds in coordinate format');
-                }
-            
-                // Convert to decimal degrees
-                let decimal = degrees + minutes / 60 + seconds / 3600;
-            
-                // Apply direction
-                return (direction === 'S' || direction === 'W') ? -decimal : decimal;
-            }
-        
 
             // Handle Degrees, Minutes, and Seconds without symbols (e.g., "04 45 00S", "036 30 00E" or "36 30 00E")
             const dmsNoSymbolPattern = /^(\d{2,3})\s+(\d{1,2})\s+(\d{1,2}(\.\d{1,5})?)([NSWE])$/;
