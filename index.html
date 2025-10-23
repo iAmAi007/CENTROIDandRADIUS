@@ -559,8 +559,20 @@
                 const toDMS = (decimal) => {
                     const absDecimal = Math.abs(decimal);
                     const degrees = Math.floor(absDecimal);
-                    const minutes = Math.floor((absDecimal - degrees) * 60);
-                    const seconds = Math.round(((absDecimal - degrees) * 60 - minutes) * 60);
+                    const totalMinutes = (absDecimal - degrees) * 60;
+                    const minutes = Math.floor(totalMinutes);
+                    const seconds = Math.round((totalMinutes - minutes) * 60 * 1000000) / 1000000; // Higher precision
+                    
+                    // Handle the 60 seconds case by carrying over
+                    if (seconds >= 60) {
+                        return {
+                            degrees: degrees,
+                            minutes: minutes + 1,
+                            seconds: 0,
+                            sign: decimal < 0 ? '-' : ''
+                        };
+                    }
+                    
                     return { degrees, minutes, seconds, sign: decimal < 0 ? '-' : '' };
                 };
                 
